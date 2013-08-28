@@ -1,9 +1,15 @@
-// A simple implementation of treap. Key in treap is assumed to be unique.
+// Package treap implements treap. 
+// Key in treap is assumed to be unique currently.
+// 
+// To create a new treap, use the following:
+//  t := treap.NewTreap()
+//  if t.Insert(Item{key, value}) == true {
+//  }
+
 package treap
 
 import (
     "time"
-    "fmt"
     "math/rand"
 )
 
@@ -22,7 +28,7 @@ type Node struct {
     left, right *Node
 }
 
-func NewNode(item Item, priority int) *Node {
+func newNode(item Item, priority int) *Node {
     return &Node{item, priority, nil, nil}
 }
 
@@ -34,6 +40,8 @@ func init() {
 func NewTreap() *Treap {
     return &Treap{0, nil}
 }
+
+// Returns the items' size in the treap
 func (t *Treap) Len() int {
     return t.size
 }
@@ -81,7 +89,7 @@ func index(root *Node, key int) *Node {
 // keys, returns true if the item is inserted to the treap, false if there is
 // already an item with the same key
 func (t *Treap) Insert (item Item) bool {
-    res, flag := insert(t.root, NewNode(item, rand.Int()))
+    res, flag := insert(t.root, newNode(item, rand.Int()))
     if flag {
         t.root = res
         t.size++
@@ -132,7 +140,8 @@ func insert(root *Node, node *Node) (*Node, bool) {
 	return root, flag
 }
 
-// Delete delete the item with the parameter key
+// Delete delete the item with the parameter key, returns true if the item
+// with key is really exist in treap, false else
 func (t *Treap) Remove (key int) bool {
     res, flag := remove(t.root, key)
     if flag {
@@ -183,8 +192,13 @@ func remove(root *Node, key int) (*Node, bool) {
     return root, flag
 }
 
+// Perform a preorder traverse using fun
 func (t *Treap) Preorder(fun func(Item)) {
     preorder(t.root, fun)
+}
+// Perform a inorder traverse using fun
+func (t *Treap) Inorder(fun func(Item)) {
+    inorder(t.root, fun)
 }
 
 func preorder(root *Node, fun func(Item)) {
@@ -194,10 +208,6 @@ func preorder(root *Node, fun func(Item)) {
     fun(root.item)
     preorder(root.left, fun)
     preorder(root.right, fun)
-}
-
-func (t *Treap) Inorder(fun func(Item)) {
-    inorder(t.root, fun)
 }
 
 func inorder(root *Node, fun func(Item)) {
